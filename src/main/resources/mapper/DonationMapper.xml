@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.donation_wf.mapper.DonationMapper">
+    
+    <resultMap id="BaseResultMap" type="com.donation_wf.entity.Donation">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="donor_id" property="donorId" jdbcType="BIGINT"/>
+        <result column="donor_name" property="donorName" jdbcType="VARCHAR"/>
+        <result column="project_id" property="projectId" jdbcType="BIGINT"/>
+        <result column="project_name" property="projectName" jdbcType="VARCHAR"/>
+        <result column="amount" property="amount" jdbcType="DECIMAL"/>
+        <result column="pay_type" property="payType" jdbcType="INTEGER"/>
+        <result column="message" property="message" jdbcType="VARCHAR"/>
+        <result column="donate_time" property="donateTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id, donor_id, donor_name, project_id, project_name, amount, 
+        pay_type, message, donate_time, create_time
+    </sql>
+    
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM donation
+        WHERE id = #{id}
+    </select>
+    
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM donation
+        ORDER BY donate_time DESC
+    </select>
+    
+    <select id="selectByProjectId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM donation
+        WHERE project_id = #{projectId}
+        ORDER BY donate_time DESC
+    </select>
+    
+    <select id="selectByDonorId" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM donation
+        WHERE donor_id = #{donorId}
+        ORDER BY donate_time DESC
+    </select>
+    
+    <select id="selectByPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM donation
+        ORDER BY donate_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM donation
+    </select>
+    
+    <select id="sumAmount" resultType="java.math.BigDecimal">
+        SELECT COALESCE(SUM(amount), 0) FROM donation
+    </select>
+    
+    <select id="countDonors" resultType="int">
+        SELECT COUNT(DISTINCT donor_id) FROM donation
+    </select>
+    
+    <insert id="insert" parameterType="com.donation_wf.entity.Donation" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO donation (donor_id, donor_name, project_id, project_name, amount, 
+                             pay_type, message, donate_time, create_time)
+        VALUES (#{donorId}, #{donorName}, #{projectId}, #{projectName}, #{amount},
+                #{payType}, #{message}, #{donateTime}, NOW())
+    </insert>
+    
+    <update id="update" parameterType="com.donation_wf.entity.Donation">
+        UPDATE donation
+        SET donor_id = #{donorId},
+            donor_name = #{donorName},
+            project_id = #{projectId},
+            project_name = #{projectName},
+            amount = #{amount},
+            pay_type = #{payType},
+            message = #{message},
+            donate_time = #{donateTime}
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE FROM donation WHERE id = #{id}
+    </delete>
+    
+    <delete id="deleteByProjectId">
+        DELETE FROM donation WHERE project_id = #{projectId}
+    </delete>
+    
+</mapper>

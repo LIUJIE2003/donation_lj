@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录 - 公益项目管理网站</title>
+    
+    <!-- Bootstrap CSS - 使用CDN引入 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        /* 页面整体样式 - 公益主题配色 */
+        body {
+            background: linear-gradient(135deg, #E8F5E9 0%, #FFF3E0 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 登录卡片样式 */
+        .login-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(46, 125, 50, 0.15);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            border-top: 4px solid #2E7D32;
+        }
+        
+        /* 标题样式 */
+        .login-title {
+            text-align: center;
+            color: #2E7D32;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        /* 表单样式 */
+        .form-control:focus {
+            border-color: #2E7D32;
+            box-shadow: 0 0 0 0.2rem rgba(46, 125, 50, 0.25);
+        }
+        
+        /* 登录按钮样式 - 公益绿 */
+        .btn-login {
+            background-color: #2E7D32;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: 600;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-login:hover {
+            background-color: #1B5E20;
+        }
+        
+        /* 注册按钮样式 */
+        .btn-register {
+            background-color: #F57C00;
+            border: none;
+            border-radius: 8px;
+            padding: 12px;
+            font-weight: 600;
+            width: 100%;
+            transition: background-color 0.2s;
+        }
+        
+        .btn-register:hover {
+            background-color: #E65100;
+        }
+        
+        /* 错误提示样式 */
+        .alert {
+            border-radius: 8px;
+        }
+        
+        /* 输入框图标 */
+        .input-group-text {
+            background: #E8F5E9;
+            border-right: none;
+            border-radius: 8px 0 0 8px;
+            color: #2E7D32;
+        }
+        
+        .input-group .form-control {
+            border-left: none;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        /* 切换链接样式 */
+        .switch-link {
+            color: #2E7D32;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .switch-link:hover {
+            color: #1B5E20;
+            text-decoration: underline;
+        }
+        
+        /* 隐藏表单 */
+        .form-hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- 登录卡片容器 -->
+    <div class="login-card">
+        <!-- 网站标题 -->
+        <h2 class="login-title">公益项目管理网站</h2>
+        
+        <!-- 成功提示信息 -->
+        <div th:if="${successMsg}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <span th:text="${successMsg}">成功信息</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <!-- 错误提示信息 -->
+        <div th:if="${errorMsg}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <span th:text="${errorMsg}">错误信息</span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        
+        <!-- 登录表单 -->
+        <form id="loginForm" th:action="@{/login/doLogin}" method="post">
+            
+            <!-- 用户名输入框 -->
+            <div class="mb-3">
+                <label for="loginUsername" class="form-label">用户名</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                        </svg>
+                    </span>
+                    <input type="text" 
+                           class="form-control" 
+                           id="loginUsername" 
+                           name="username" 
+                           placeholder="请输入用户名"
+                           required>
+                </div>
+            </div>
+            
+            <!-- 密码输入框 -->
+            <div class="mb-4">
+                <label for="loginPassword" class="form-label">密码</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+                            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
+                        </svg>
+                    </span>
+                    <input type="password" 
+                           class="form-control" 
+                           id="loginPassword" 
+                           name="password" 
+                           placeholder="请输入密码"
+                           required>
+                </div>
+            </div>
+            
+            <!-- 登录按钮 -->
+            <button type="submit" class="btn btn-primary btn-login">
+                登 录
+            </button>
+            
+        </form>
+        
+        <!-- 注册表单（默认隐藏） -->
+        <form id="registerForm" th:action="@{/register}" method="post" class="form-hidden">
+            
+            <!-- 用户名输入框 -->
+            <div class="mb-3">
+                <label for="regUsername" class="form-label">用户名</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                        </svg>
+                    </span>
+                    <input type="text" 
+                           class="form-control" 
+                           id="regUsername" 
+                           name="username" 
+                           placeholder="请输入用户名（3-20个字符）"
+                           minlength="3"
+                           maxlength="20"
+                           required>
+                </div>
+            </div>
+            
+            <!-- 密码输入框 -->
+            <div class="mb-3">
+                <label for="regPassword" class="form-label">密码</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock" viewBox="0 0 16 16">
+                            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
+                        </svg>
+                    </span>
+                    <input type="password" 
+                           class="form-control" 
+                           id="regPassword" 
+                           name="password" 
+                           placeholder="请输入密码（6-20个字符）"
+                           minlength="6"
+                           maxlength="20"
+                           required>
+                </div>
+            </div>
+            
+            <!-- 确认密码输入框 -->
+            <div class="mb-4">
+                <label for="confirmPassword" class="form-label">确认密码</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-lock-fill" viewBox="0 0 16 16">
+                            <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/>
+                        </svg>
+                    </span>
+                    <input type="password" 
+                           class="form-control" 
+                           id="confirmPassword" 
+                           name="confirmPassword" 
+                           placeholder="请再次输入密码"
+                           minlength="6"
+                           maxlength="20"
+                           required>
+                </div>
+            </div>
+            
+            <!-- 注册按钮 -->
+            <button type="submit" class="btn btn-primary btn-register">
+                注 册
+            </button>
+            
+        </form>
+        
+        <!-- 切换链接 -->
+        <div class="text-center mt-3">
+            <span id="switchToRegister">还没有账号？<a class="switch-link">立即注册</a></span>
+            <span id="switchToLogin" class="form-hidden">已有账号？<a class="switch-link">立即登录</a></span>
+        </div>
+        
+
+    </div>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- 登录/注册切换脚本 -->
+    <script>
+        // 获取元素
+        const loginForm = document.getElementById('loginForm');
+        const registerForm = document.getElementById('registerForm');
+        const switchToRegister = document.getElementById('switchToRegister');
+        const switchToLogin = document.getElementById('switchToLogin');
+        
+        // 切换到注册表单
+        switchToRegister.addEventListener('click', function() {
+            loginForm.classList.add('form-hidden');
+            registerForm.classList.remove('form-hidden');
+            switchToRegister.classList.add('form-hidden');
+            switchToLogin.classList.remove('form-hidden');
+            document.querySelector('.login-title').textContent = '用户注册';
+        });
+        
+        // 切换到登录表单
+        switchToLogin.addEventListener('click', function() {
+            registerForm.classList.add('form-hidden');
+            loginForm.classList.remove('form-hidden');
+            switchToLogin.classList.add('form-hidden');
+            switchToRegister.classList.remove('form-hidden');
+            document.querySelector('.login-title').textContent = '公益项目管理网站';
+        });
+    </script>
+</body>
+</html>

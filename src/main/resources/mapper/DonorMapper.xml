@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.donation_wf.mapper.DonorMapper">
+    
+    <resultMap id="BaseResultMap" type="com.donation_wf.entity.Donor">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="phone" property="phone" jdbcType="VARCHAR"/>
+        <result column="email" property="email" jdbcType="VARCHAR"/>
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="remark" property="remark" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+        <result column="create_by" property="createBy" jdbcType="VARCHAR"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id, name, phone, email, address, type, remark, create_time, update_time, create_by
+    </sql>
+    
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM donor
+        WHERE id = #{id}
+    </select>
+    
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM donor
+        ORDER BY create_time DESC
+    </select>
+    
+    <select id="selectByName" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM donor
+        WHERE name LIKE CONCAT('%', #{name}, '%')
+        ORDER BY create_time DESC
+    </select>
+    
+    <select id="selectByPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM donor
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM donor
+    </select>
+    
+    <insert id="insert" parameterType="com.donation_wf.entity.Donor" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO donor (name, phone, email, address, type, remark, create_time, create_by)
+        VALUES (#{name}, #{phone}, #{email}, #{address}, #{type}, #{remark}, NOW(), #{createBy})
+    </insert>
+    
+    <update id="update" parameterType="com.donation_wf.entity.Donor">
+        UPDATE donor
+        SET name = #{name},
+            phone = #{phone},
+            email = #{email},
+            address = #{address},
+            type = #{type},
+            remark = #{remark}
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE FROM donor WHERE id = #{id}
+    </delete>
+    
+    <!-- 根据创建人查询捐赠人列表 -->
+    <select id="selectByCreateBy" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM donor
+        WHERE create_by = #{createBy}
+        ORDER BY create_time DESC
+    </select>
+    
+    <!-- 根据ID和创建人查询捐赠人（用于验证权限） -->
+    <select id="selectByIdAndCreateBy" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM donor
+        WHERE id = #{id} AND create_by = #{createBy}
+    </select>
+    
+</mapper>

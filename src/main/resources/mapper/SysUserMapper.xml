@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--
+    系统用户Mapper XML映射文件
+    功能：定义用户相关的SQL语句
+    
+    对应接口：com.donation_wf.mapper.SysUserMapper
+-->
+<mapper namespace="com.donation_wf.mapper.SysUserMapper">
+    
+    <!-- 结果映射：将数据库字段映射到实体类属性 -->
+    <resultMap id="BaseResultMap" type="com.donation_wf.entity.SysUser">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="role" property="role" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <!-- 基础字段列表 -->
+    <sql id="Base_Column_List">
+        id, username, password, role, status, create_time, update_time
+    </sql>
+    
+    <!-- 根据用户名查询用户 -->
+    <!-- 使用场景：登录验证 -->
+    <select id="selectByUsername" resultMap="BaseResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM sys_user
+        WHERE username = #{username}
+    </select>
+    
+    <!-- 根据ID查询用户 -->
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT 
+        <include refid="Base_Column_List"/>
+        FROM sys_user
+        WHERE id = #{id}
+    </select>
+    
+    <!-- 插入新用户 -->
+    <insert id="insert" parameterType="com.donation_wf.entity.SysUser" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO sys_user (username, password, role, status, create_time)
+        VALUES (#{username}, #{password}, #{role}, #{status}, NOW())
+    </insert>
+    
+    <!-- 更新用户信息 -->
+    <update id="update" parameterType="com.donation_wf.entity.SysUser">
+        UPDATE sys_user
+        SET username = #{username},
+            password = #{password},
+            role = #{role},
+            status = #{status},
+            update_time = NOW()
+        WHERE id = #{id}
+    </update>
+    
+</mapper>

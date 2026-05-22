@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.donation_wf.mapper.ProjectMapper">
+    
+    <resultMap id="BaseResultMap" type="com.donation_wf.entity.Project">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="description" property="description" jdbcType="VARCHAR"/>
+        <result column="image_url" property="imageUrl" jdbcType="VARCHAR"/>
+        <result column="target_amount" property="targetAmount" jdbcType="DECIMAL"/>
+        <result column="current_amount" property="currentAmount" jdbcType="DECIMAL"/>
+        <result column="beneficiary_count" property="beneficiaryCount" jdbcType="INTEGER"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="start_time" property="startTime" jdbcType="TIMESTAMP"/>
+        <result column="end_time" property="endTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="update_time" property="updateTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <sql id="Base_Column_List">
+        id, name, description, image_url, target_amount, current_amount, 
+        beneficiary_count, status, start_time, end_time, create_time, update_time
+    </sql>
+    
+    <select id="selectById" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM project
+        WHERE id = #{id}
+    </select>
+    
+    <select id="selectAll" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM project
+        ORDER BY create_time DESC
+    </select>
+    
+    <select id="selectByStatus" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM project
+        WHERE status = #{status}
+        ORDER BY create_time DESC
+    </select>
+    
+    <select id="selectByPage" resultMap="BaseResultMap">
+        SELECT <include refid="Base_Column_List"/>
+        FROM project
+        ORDER BY create_time DESC
+        LIMIT #{offset}, #{limit}
+    </select>
+    
+    <select id="countAll" resultType="int">
+        SELECT COUNT(*) FROM project
+    </select>
+    
+    <insert id="insert" parameterType="com.donation_wf.entity.Project" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO project (name, description, image_url, target_amount, current_amount, 
+                            beneficiary_count, status, start_time, end_time, create_time)
+        VALUES (#{name}, #{description}, #{imageUrl}, #{targetAmount}, #{currentAmount},
+                #{beneficiaryCount}, #{status}, #{startTime}, #{endTime}, NOW())
+    </insert>
+    
+    <update id="update" parameterType="com.donation_wf.entity.Project">
+        UPDATE project
+        SET name = #{name},
+            description = #{description},
+            image_url = #{imageUrl},
+            target_amount = #{targetAmount},
+            current_amount = #{currentAmount},
+            beneficiary_count = #{beneficiaryCount},
+            status = #{status},
+            start_time = #{startTime},
+            end_time = #{endTime}
+        WHERE id = #{id}
+    </update>
+    
+    <delete id="deleteById">
+        DELETE FROM project WHERE id = #{id}
+    </delete>
+    
+    <update id="updateCurrentAmount">
+        UPDATE project
+        SET current_amount = current_amount + #{amount}
+        WHERE id = #{id}
+    </update>
+    
+    <update id="updateBeneficiaryCount">
+        UPDATE project
+        SET beneficiary_count = beneficiary_count + #{count}
+        WHERE id = #{id}
+    </update>
+    
+</mapper>

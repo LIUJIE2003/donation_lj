@@ -1,0 +1,51 @@
+# ========================================
+# 公益项目管理网站 - SpringBoot配置文件
+# ========================================
+
+# 服务器配置
+server:
+  port: 8085
+  servlet:
+    context-path: /donation  # 项目上下文路径，访问时需要加此前缀
+
+# Spring配置
+spring:
+  application:
+    name: donation_wf
+  
+  # 数据源配置 - MySQL数据库连接
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/donation_db?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: Liujie2003..  # 请根据实际情况修改数据库密码
+  
+  # Thymeleaf模板引擎配置
+  thymeleaf:
+    prefix: classpath:/templates/  # 模板文件前缀路径
+    suffix: .html                   # 模板文件后缀
+    mode: HTML                      # 模板模式
+    encoding: UTF-8                 # 编码格式
+    cache: false                    # 开发环境关闭缓存，方便调试
+
+# PageHelper分页插件配置
+pagehelper:
+  helper-dialect: mysql
+  reasonable: true
+  support-methods-arguments: true
+
+# MyBatis配置
+mybatis:
+  # 实体类别名包路径，简化XML中的类型引用
+  type-aliases-package: com.donation_wf.entity
+  # Mapper XML文件位置
+  mapper-locations: classpath:mapper/*.xml
+  # 配置项
+  configuration:
+    map-underscore-to-camel-case: true  # 开启驼峰命名转换（user_name -> userName）
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl  # 打印SQL日志，方便调试
+
+# 日志配置
+logging:
+  level:
+    com.donation_wf: debug  # 项目日志级别
